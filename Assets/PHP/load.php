@@ -1,9 +1,9 @@
 <?php
 header('Content-Type: application/json');
+require 'db.php';
 
-if (file_exists('contacts.json')) {
-    echo file_get_contents('contacts.json');
-} else {
-    echo json_encode([]);
-}
+$stmt = $pdo->query("SELECT name, phone FROM contacts");
+$contacts = $stmt->fetchAll();
+
+echo json_encode($contacts);
 ?>

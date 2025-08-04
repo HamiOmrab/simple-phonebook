@@ -1,17 +1,22 @@
 <?php
-// Get raw POST data
-$data = file_get_contents("php://input");
+header('Content-Type: application/json');
+require 'db.php';
 
-// Decode to verify it's valid JSON
-$contacts = json_decode($data, true);
-if ($contacts === null) {
+$data = json_decode(file_get_contents('php://input'), true);
+
+if (!is_array($data)) {
     http_response_code(400);
-    echo json_encode(["status" => "error", "message" => "Invalid JSON"]);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid data']);
     exit;
 }
 
-// Save to file
-file_put_contents('contacts.json', json_encode($contacts, JSON_PRETTY_PRINT));
-echo json_encode(["status" => "success"]);
+// Clear table first
+$pdo->exec("DELETE FROM contacts");
 
-?>
+$stmt = $pdo->prepare("INSERT INTO contacts (name, phone) VALUES (?, ?)");
+
+foreach ($data as $contact) {
+    $stmt->execute([$contact['name'], $contact['phone']]);
+}
+
+echo json_encode(['status' => 'success']);
