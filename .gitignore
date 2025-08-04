@@ -1,0 +1,21 @@
+# Ignore Node.js modules (if any)
+node_modules/
+
+# Ignore PHP Composer vendor folder
+vendor/
+
+# Ignore environment variables files
+.env
+
+# Ignore log files
+*.log
+
+# Ignore cache files
+*.cache
+
+# macOS system files
+.DS_Store
+
+# IDE / Editor folders
+.idea/
+.vscode/
