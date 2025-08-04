@@ -1,6 +1,16 @@
+let contacts = [];
+
+window.addEventListener('DOMContentLoaded', () => {
+  fetch('Assets/PHP/load.php')
+    .then(res => res.json())
+    .then(data => {
+      contacts = data;
+      updateContactList();
+    });
+});
+
 const form = document.getElementById('contact-form');
 const contactList = document.getElementById('contact-list');
-let contacts = [];
 
 form.addEventListener('submit', function (e) {
   e.preventDefault();
@@ -12,6 +22,7 @@ form.addEventListener('submit', function (e) {
     const contact = { name, phone };
     contacts.push(contact);
     updateContactList();
+    saveContacts();
     form.reset();
   }
 });
@@ -39,6 +50,7 @@ function updateContactList() {
 function deleteContact(index) {
   contacts.splice(index, 1);
   updateContactList();
+  saveContacts();
 }
 
 function editContact(index) {
@@ -62,6 +74,7 @@ function saveContact(index) {
   if (newName && newPhone) {
     contacts[index] = { name: newName, phone: newPhone };
     updateContactList();
+    saveContacts();
   } else {
     alert('Please enter both name and phone.');
   }
@@ -70,3 +83,19 @@ function saveContact(index) {
 function cancelEdit(index) {
   updateContactList();
 }
+
+function saveContacts() {
+  fetch('Assets/PHP/save.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(contacts)
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Save response:', data);
+  })
+  .catch(error => {
+    console.error('Error saving contacts:', error);
+  });
+}
+
