@@ -1,9 +1,13 @@
 <?php
 header('Content-Type: application/json');
-require 'db.php';
+require_once 'db.php';
+try {
+    $stmt = $pdo->query("SELECT * FROM contacts");
+    $contacts = $stmt->fetchAll();
 
-$stmt = $pdo->query("SELECT name, phone FROM contacts");
-$contacts = $stmt->fetchAll();
-
-echo json_encode($contacts);
+    echo json_encode($contacts);
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+}
 ?>
